@@ -18,8 +18,54 @@
 
         <main class="main-content">
             <div id="sheet-management-view" class="view-container" style="display: none;">
-                <p class="placeholder-text">V5.0 Character Sheet Management UI placeholder. Existing V5.0 code handles this view.</p>
+    <div class="sheet-layout">
+        
+        <section class="sheet-section character-list-section">
+            <h2>Registered Characters (Max 10)</h2>
+            <div class="character-controls">
+                <button id="create-new-char-btn" class="btn btn-primary">Create New Character</button>
+                <button id="import-char-btn" class="btn btn-secondary">Import JSON</button>
             </div>
+            <table id="character-list-table" class="stats-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Level</th>
+                        <th>Race</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="character-list-table-body">
+                    </tbody>
+            </table>
+        </section>
+
+        <section class="sheet-section sheet-detail-section">
+            <h2>Sheet Details & Editor</h2>
+            <div class="editor-controls">
+                <select id="char-select-to-edit">
+                    <option value="">-- Select Character to Edit --</option>
+                </select>
+                <button id="load-char-btn" class="btn btn-secondary">Load Sheet</button>
+                <button id="save-char-btn" class="btn btn-action">Save Changes</button>
+            </div>
+            <div class="sheet-viewer">
+                <p class="placeholder-text">Load a character to view/edit their full sheet here.</p>
+            </div>
+        </section>
+
+        <section class="sheet-section data-management-section">
+            <h2>Data Management</h2>
+            <button id="export-all-data-btn" class="btn btn-primary">Export All Sheets (JSON)</button>
+            <textarea id="data-output" class="system-output" readonly placeholder="Exported data will appear here..."></textarea>
+            <button id="copy-data-btn" class="btn btn-secondary">Copy to Clipboard</button>
+        </section>
+
+    </div>
+</div>
+
 
             <div id="battle-system-view" class="view-container">
                 <div class="battle-layout">
