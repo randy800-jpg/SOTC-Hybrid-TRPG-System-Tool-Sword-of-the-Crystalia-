@@ -6,229 +6,241 @@
     <title>TRPG Character & Battle Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        /* Google Fonts: Merriweather (Serif for main text), Kalam (Handwritten for headers) */
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@700&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+        
+        /* --- Leather Journal Theme Styles --- */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* 背景色を薄い青灰色に統一 */
+            /* 背景: 古びた革の質感 (深いブラウン/セピア) */
+            font-family: 'Merriweather', serif;
+            background-color: #5D4037; /* Deep Brown (Brown 800) */
+            background-image: url("data:image/svg+xml,%3Csvg width='42' height='44' viewBox='0 0 42 44' xmlns='http://www.w3.org/2000/svg'%3E%3Cg id='Page-1' fill='none' fill-rule='evenodd'%3E%3Cg id='brick-wall' fill='%23795548' fill-opacity='0.4'%3E%3Cpath d='M0 0h3v4h-3V0zm0 13h3v21h-3V13zM3 4h3v5h-3V4zm0 21h3v12h-3V25zm3-20h3v4h-3V5zm0 20h3v11h-3V25zm-3-5h3v4h-3V20zM3 9h3v5h-3V9zm3 10h3v5h-3V19zM9 4h3v20h-3V4zm0 20h3v11h-3V24zm-3 1h3v3h-3V25zm-3 5h3v2h-3v-2zm-3 2h3v4h-3V32zm3 1h3v3h-3v-3zm0 3h3v5h-3v-5zm3-2h3v4h-3V35zm0 5h3v4h-3v-4zM9 0h3v3h-3V0zm3 0h3v2h-3V0zm3 0h3v4h-3V0zm3 0h3v5h-3V0zm3 0h3v4h-3V0zm3 0h3v3h-3V0zm3 0h3v2h-3V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); /* Subtle Leather Texture */
         }
-        /* カスタムスタイル / Custom Styles */
+        
+        #app-container {
+            /* ノートの紙部分 (クリーム色) */
+            background-color: #FAF0E6; /* Linen / クリーム色 */
+            border: 4px solid #795548; /* Brown 600 - 革の縁取り */
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); /* 強い影 */
+        }
+
         .card {
-            /* 基本のカードスタイル: 白背景、角丸、影、パディング */
-            @apply bg-white rounded-xl shadow-lg p-5 transition-all duration-300;
+            /* 基本のカードスタイル: 紙の質感 */
+            @apply bg-[#FFFFF0] rounded-lg shadow-md p-4 transition-all duration-300 border border-[#D2B48C]; /* Ivory/Cream color, light border */
         }
         .header-title {
-            /* セクションのヘッダータイトル */
-            @apply text-xl font-bold text-gray-700 mb-3 flex items-center border-b border-gray-200 pb-2;
+            /* セクションのヘッダータイトル: 手書き風、深い色、線 */
+            font-family: 'Kalam', cursive;
+            @apply text-2xl font-bold text-[#654321] mb-3 flex items-center border-b-2 border-[#A0522D] pb-2; /* Dark Brown, Sienna border */
         }
         .input-field {
-            /* フォーム入力フィールド */
-            @apply p-2 border border-gray-300 rounded-md focus:ring-emerald-500 focus:border-emerald-500 transition duration-150 w-full;
+            /* フォーム入力フィールド: 紙に書かれた文字のイメージ */
+            @apply p-2 border border-[#A0522D] rounded-md focus:ring-[#A0522D] focus:border-[#A0522D] transition duration-150 w-full bg-[#FFFFF0];
         }
         .mod-display {
-            /* 補正値の表示 */
-            @apply font-mono text-xl text-indigo-700 font-extrabold;
+            /* 補正値の表示: 深いインクの色 */
+            font-family: 'Merriweather', serif;
+            @apply text-lg text-[#006400] font-extrabold; /* Dark Green Ink */
         }
         .copy-btn {
-            /* コピーボタン */
-            @apply bg-indigo-500 text-white text-sm p-2 rounded-lg hover:bg-indigo-600 transition duration-150 shadow-md;
+            /* コピーボタン: 革の色、控えめな影 */
+            @apply bg-[#A0522D] text-white text-sm p-2 rounded-lg hover:bg-[#8B4513] transition duration-150 shadow-md; /* Sienna/Saddle Brown */
         }
         .qty-btn {
-            /* 数量増減ボタン (インベントリ用など) */
-            @apply bg-gray-200 text-gray-700 font-bold p-1 rounded-full w-6 h-6 flex items-center justify-center hover:bg-gray-300 transition;
+            /* 数量増減ボタン */
+            @apply bg-[#D2B48C] text-[#654321] font-bold p-1 rounded-full w-6 h-6 flex items-center justify-center hover:bg-[#B8860B] hover:text-white transition; /* Tan/Dark Gold */
         }
         .nav-btn {
-            /* ナビゲーションボタンの基本スタイル */
-            @apply bg-gray-200 text-gray-700 p-2 rounded-lg font-semibold transition duration-150;
+            /* ナビゲーションボタンの基本スタイル: 控えめな色 */
+            @apply bg-[#D2B48C] text-[#654321] p-3 rounded-xl font-semibold transition duration-150 shadow-inner hover:bg-[#B8860B] hover:text-white;
         }
         .nav-btn.active {
-            /* アクティブなナビゲーションボタン */
-            @apply bg-emerald-600 text-white;
+            /* アクティブなナビゲーションボタン: 強調色 (深い緑) */
+            @apply bg-[#006400] text-white shadow-lg;
         }
         /* 戦闘テーブルの最小フォントサイズ */
-        .stats-table {
-            @apply w-full text-left border-collapse;
-        }
         .stats-table th, .stats-table td {
-            @apply p-2 border-b border-gray-200 text-xs sm:text-sm;
+            @apply p-2 border-b border-[#D2B48C] text-xs sm:text-sm;
         }
         .stats-table th {
-            @apply bg-gray-50 font-medium text-gray-600;
+            @apply bg-[#D2B48C] font-medium text-[#654321];
         }
         .btn {
             @apply px-4 py-2 rounded-lg font-semibold transition duration-150 shadow-md;
         }
         .btn-primary {
-            @apply bg-indigo-600 text-white hover:bg-indigo-700;
+            @apply bg-[#A0522D] text-white hover:bg-[#8B4513];
         }
         .btn-secondary {
-            @apply bg-gray-500 text-white hover:bg-gray-600;
+            @apply bg-[#795548] text-white hover:bg-[#6D4C41];
         }
         .btn-action {
-            @apply bg-purple-600 text-white hover:bg-purple-700;
+            @apply bg-[#006400] text-white hover:bg-[#008000]; /* Dark Green for actions */
         }
         .dice-result {
-            @apply p-3 bg-purple-50 rounded-md border border-purple-200 font-extrabold text-xl text-purple-800 text-center;
+            @apply p-3 bg-[#DCDCDC] rounded-md border border-[#A0522D] font-extrabold text-xl text-[#A0522D] text-center;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-6 md:p-10">
 
-    <div id="app-container" class="max-w-7xl mx-auto">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 mb-6 border-b-4 border-emerald-500 pb-2 text-center">
-            TRPG Manager / TRPG マネージャー
+    <div id="app-container" class="max-w-7xl mx-auto p-4 md:p-8">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-[#654321] mb-6 border-b-4 border-[#A0522D] pb-2 text-center font-['Kalam']">
+            TRPG Manager
         </h1>
         
-        <div class="flex space-x-2 mb-6 justify-center">
+        <div class="flex space-x-3 mb-6 justify-center">
             <button id="nav-sheet" class="nav-btn" onclick="switchView('sheet-management-view')">
-                Character Sheet Management / キャラクターシート管理
+                Character Sheet
             </button>
             <button id="nav-battle" class="nav-btn active" onclick="switchView('battle-system-view')">
-                Battle System / 戦闘システム
+                Battle System
             </button>
         </div>
 
         <main class="main-content">
             <div id="sheet-management-view" class="view-container transition-all duration-500" style="display: none;">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="md:col-span-2 p-3 bg-white rounded-xl shadow-md border border-gray-200 flex items-center space-x-3">
-                        <label for="char-select" class="font-semibold text-gray-700 whitespace-nowrap">Character Select: / キャラクター選択:</label>
+                    <div class="md:col-span-2 p-3 bg-[#FAF0E6] rounded-xl shadow-inner border border-[#D2B48C] flex items-center space-x-3">
+                        <label for="char-select" class="font-semibold text-[#654321] whitespace-nowrap">Character Select:</label>
                         <select id="char-select" class="input-field cursor-pointer p-2 w-full"></select>
-                        <button id="new-char-btn" class="bg-green-500 text-white p-2 rounded-md text-sm whitespace-nowrap hover:bg-green-600">New / 新規作成</button>
-                        <button id="delete-char-btn" class="bg-red-500 text-white p-2 rounded-md text-sm whitespace-nowrap hover:bg-red-600">Delete / 削除</button>
+                        <button id="new-char-btn" class="bg-[#006400] text-white p-2 rounded-md text-sm whitespace-nowrap hover:bg-[#008000]">New</button>
+                        <button id="delete-char-btn" class="bg-[#A0522D] text-white p-2 rounded-md text-sm whitespace-nowrap hover:bg-[#8B4513]">Delete</button>
                     </div>
-                    <div id="status-area" class="p-3 bg-blue-100 border-l-4 border-blue-500 text-blue-800 text-sm rounded-lg flex items-center">
-                        Authenticating... / 認証中...
+                    <div id="status-area" class="p-3 bg-[#FFF8DC] border-l-4 border-[#B8860B] text-[#A0522D] text-sm rounded-lg flex items-center shadow-inner">
+                        Authenticating...
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                     
-                    <section id="basic-hp-sp-info" class="card bg-emerald-50/50">
-                        <h2 class="header-title text-emerald-700">
+                    <section id="basic-hp-sp-info" class="card bg-[#FAF0E6]">
+                        <h2 class="header-title text-[#006400]">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 016 0zm6 12a.75.75 0 00-.75-.75h-18a.75.75 0 00-.75.75v.5c0 .414.336.75.75.75h18a.75.75 0 00.75-.75v-.5z"></path></svg>
-                            Basic Info & Power / 基本情報と戦力
+                            Basic Info & Power
                         </h2>
                         
                         <div class="space-y-3">
-                            <input type="text" id="char-name" placeholder="Name (e.g., Wakashamo) / 名前 (例: Wakashamo)" class="input-field text-lg font-semibold">
+                            <input type="text" id="char-name" placeholder="Name (e.g., Wakashamo)" class="input-field text-lg font-semibold">
                             <select id="char-class" class="input-field bg-white cursor-pointer">
-                                <option value="">-- Select Class -- / -- クラス選択 --</option>
-                                <option value="戦士">Warrior / 戦士</option>
-                                <option value="斥候">Scout / 斥候</option>
-                                <option value="魔術">Magic / 魔術</option>
-                                <option value="治癒">Heal / 治癒</option>
+                                <option value="">-- Select Class --</option>
+                                <option value="Warrior">Warrior</option>
+                                <option value="Scout">Scout</option>
+                                <option value="Magic">Magic</option>
+                                <option value="Heal">Heal</option>
                             </select>
                         </div>
                         
-                        <div class="mt-4 pt-3 border-t border-gray-200">
-                            <h3 class="font-semibold text-gray-700 mb-2">Skill Growth / スキル成長 (Growth)</h3>
+                        <div class="mt-4 pt-3 border-t border-[#D2B48C]">
+                            <h3 class="font-semibold text-[#654321] mb-2">Skill Growth (Growth)</h3>
                             <div class="flex space-x-2">
                                 <select id="char-skill-to-grow" class="input-field text-sm bg-white cursor-pointer p-1 w-2/3">
-                                    <option value="">-- Select Growth Skill -- / -- 成長スキルを選択 --</option>
+                                    <option value="">-- Select Growth Skill --</option>
                                 </select>
-                                <button id="add-growth-btn" class="w-1/3 bg-blue-500 text-white p-1 rounded-md text-sm hover:bg-blue-600 transition duration-150 transform active:scale-95 whitespace-nowrap">
-                                    +1 Growth / +1 成長
+                                <button id="add-growth-btn" class="w-1/3 bg-[#A0522D] text-white p-1 rounded-md text-sm hover:bg-[#8B4513] transition duration-150 transform active:scale-95 whitespace-nowrap">
+                                    +1 Growth
                                 </button>
                             </div>
-                            <p id="total-growth-applied" class="text-xs text-gray-500 mt-2 p-2 bg-gray-100 rounded-md">
-                                Current Growth Bonus: Initial Growth + Scenario Growth (Total 0 times) / 現在の成長ボーナス: 初期成長 + シナリオ成長 (計 0 回)
+                            <p id="total-growth-applied" class="text-xs text-[#795548] mt-2 p-2 bg-[#D2B48C]/50 rounded-md">
+                                Current Growth Bonus: Initial Growth + Scenario Growth (Total 0 times)
                             </p>
                         </div>
 
-                        <div class="mt-4 pt-3 border-t border-gray-200">
-                            <h3 class="font-semibold text-gray-700 mb-2">HP / SP</h3>
+                        <div class="mt-4 pt-3 border-t border-[#D2B48C]">
+                            <h3 class="font-semibold text-[#654321] mb-2">HP / SP</h3>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="flex flex-col">
-                                    <label class="text-xs text-gray-500">HP (Current / Max) / HP (現在 / 最大)</label>
+                                    <label class="text-xs text-[#795548]">HP (Current / Max)</label>
                                     <div class="flex items-center space-x-1">
-                                        <input type="number" id="char-current-hp" min="0" class="input-field p-1 text-center bg-red-50/50">
+                                        <input type="number" id="char-current-hp" min="0" class="input-field p-1 text-center bg-[#FFE4E1]">
                                         <span class="text-lg">/</span>
-                                        <span id="char-max-hp" class="bg-gray-200 p-1 rounded-md text-center font-mono w-full">0</span>
+                                        <span id="char-max-hp" class="bg-[#D2B48C] p-1 rounded-md text-center font-mono w-full text-[#654321]">0</span>
                                     </div>
                                 </div>
                                 <div class="flex flex-col">
-                                    <label class="text-xs text-gray-500">SP (Current / Max) / SP (現在 / 最大)</label>
+                                    <label class="text-xs text-[#795548]">SP (Current / Max)</label>
                                     <div class="flex items-center space-x-1">
-                                        <input type="number" id="char-current-sp" min="0" class="input-field p-1 text-center bg-blue-50/50">
+                                        <input type="number" id="char-current-sp" min="0" class="input-field p-1 text-center bg-[#E0FFFF]">
                                         <span class="text-lg">/</span>
-                                        <span id="char-max-sp" class="bg-gray-200 p-1 rounded-md text-center font-mono w-full">0</span>
+                                        <span id="char-max-sp" class="bg-[#D2B48C] p-1 rounded-md text-center font-mono w-full text-[#654321]">0</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-3 text-center flex justify-around gap-2">
-                            <button id="add-max-hp-btn" data-stat="hp" class="max-stat-btn text-xs bg-red-500 text-white p-2 rounded-md hover:bg-red-600 transition duration-150 transform active:scale-95 w-1/2">
-                                Max HP +1 Growth / 最大HP +1 成長
+                            <button id="add-max-hp-btn" data-stat="hp" class="max-stat-btn text-xs bg-[#A0522D] text-white p-2 rounded-md hover:bg-[#8B4513] transition duration-150 transform active:scale-95 w-1/2">
+                                Max HP +1 Growth
                             </button>
-                            <button id="add-max-sp-btn" data-stat="sp" class="max-stat-btn text-xs bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-150 transform active:scale-95 w-1/2">
-                                Max SP +1 Growth / 最大SP +1 成長
+                            <button id="add-max-sp-btn" data-stat="sp" class="max-stat-btn text-xs bg-[#006400] text-white p-2 rounded-md hover:bg-[#008000] transition duration-150 transform active:scale-95 w-1/2">
+                                Max SP +1 Growth
                             </button>
                         </div>
                     </section>
 
                     <section id="modifiers" class="card">
-                        <h2 class="header-title text-blue-700">
+                        <h2 class="header-title text-[#795548]">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 .895 3 2s-1.343 2-3 2v5l-2.939-2.939m5.878 0L15 15m0 0l-2.939-2.939m-2.939 2.939L12 15m0 0l2.939 2.939m-5.878-5.878l-2.939-2.939"></path></svg>
-                            Total Modifiers (ALL) / 総合補正値 (ALL)
+                            Total Modifiers (ALL)
                         </h2>
                         
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <h3 class="font-semibold text-gray-700 mb-2">【Combat Roll Modifiers】 / 【戦闘判定補正】</h3>
+                                <h3 class="font-semibold text-[#654321] mb-2">【Combat Roll Modifiers】</h3>
                                 <div id="combat-modifiers" class="space-y-2">
-                                    <div class="flex justify-between p-2 bg-indigo-50 rounded-md"><span class="font-medium">Attack Roll / 攻撃判定</span><span id="total-attack" class="mod-display">0</span></div>
-                                    <div class="flex justify-between p-2 bg-indigo-50 rounded-md"><span class="font-medium">Defense Roll / 防御判定</span><span id="total-defense" class="mod-display">0</span></div>
-                                    <div class="flex justify-between p-2 bg-indigo-50 rounded-md"><span class="font-medium">Spell Roll / 呪文判定</span><span id="total-spell" class="mod-display">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#F5F5DC] rounded-md"><span class="font-medium">Attack Roll</span><span id="total-attack" class="mod-display text-[#006400]">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#F5F5DC] rounded-md"><span class="font-medium">Defense Roll</span><span id="total-defense" class="mod-display text-[#006400]">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#F5F5DC] rounded-md"><span class="font-medium">Spell Roll</span><span id="total-spell" class="mod-display text-[#006400]">0</span></div>
                                 </div>
                             </div>
 
                             <div>
-                                <h3 class="font-semibold text-gray-700 mb-2">【DMG Modifiers / Reduction】 / 【DMG補正】</h3>
+                                <h3 class="font-semibold text-[#654321] mb-2">【DMG Modifiers / Reduction】</h3>
                                 <div id="damage-modifiers" class="space-y-2">
-                                    <div class="flex justify-between p-2 bg-red-50 rounded-md"><span class="font-medium">Weapon DMG Mod / 武器DMG補正</span><span id="total-dmg-weapon" class="mod-display text-red-700">0</span></div>
-                                    <div class="flex justify-between p-2 bg-red-50 rounded-md"><span class="font-medium">Magic DMG Mod / 魔法DMG補正</span><span id="total-dmg-magic" class="mod-display text-red-700">0</span></div>
-                                    <div class="flex justify-between p-2 bg-blue-50 rounded-md"><span class="font-medium">Physical DMG Reduc / 物理DMG軽減</span><span id="total-reduc-phys" class="mod-display text-blue-700">0</span></div>
-                                    <div class="flex justify-between p-2 bg-blue-50 rounded-md"><span class="font-medium">Magic DMG Reduc / 魔法DMG軽減</span><span id="total-reduc-magic" class="mod-display text-blue-700">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#FFF8DC] rounded-md"><span class="font-medium">Weapon DMG Mod</span><span id="total-dmg-weapon" class="mod-display text-[#A0522D]">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#FFF8DC] rounded-md"><span class="font-medium">Magic DMG Mod</span><span id="total-dmg-magic" class="mod-display text-[#A0522D]">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#F0FFF0] rounded-md"><span class="font-medium">Physical DMG Reduc</span><span id="total-reduc-phys" class="mod-display text-[#006400]">0</span></div>
+                                    <div class="flex justify-between p-2 bg-[#F0FFF0] rounded-md"><span class="font-medium">Magic DMG Reduc</span><span id="total-reduc-magic" class="mod-display text-[#006400]">0</span></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-3 border-t border-gray-200">
-                            <h3 class="font-semibold text-gray-700 mb-2">【Skill Roll Modifiers】 / 【スキル判定補正】</h3>
+                        <div class="mt-4 pt-3 border-t border-[#D2B48C]">
+                            <h3 class="font-semibold text-[#654321] mb-2">【Skill Roll Modifiers】</h3>
                             <div id="skill-modifiers" class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                                 </div>
                         </div>
                     </section>
                     
-                    <section id="dice-roll-currency" class="card bg-yellow-50/50">
-                        <h2 class="header-title text-purple-700">
+                    <section id="dice-roll-currency" class="card bg-[#FFF8DC]">
+                        <h2 class="header-title text-[#A0522D]">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            2D6 Roll & Currency / 2D6 判定 & 所持金
+                            2D6 Roll & Currency
                         </h2>
 
-                        <div class="p-3 bg-purple-100 rounded-lg shadow-inner mb-4">
-                            <h3 class="font-bold text-lg text-purple-800 mb-2">Action Roll (2D6) / アクション判定 (2D6)</h3>
+                        <div class="p-3 bg-[#D2B48C]/50 rounded-lg shadow-inner mb-4">
+                            <h3 class="font-bold text-lg text-[#654321] mb-2 font-['Kalam']">Action Roll (2D6)</h3>
                             <select id="roll-type-select" class="input-field mb-2 bg-white cursor-pointer p-2">
-                                <option value="">-- Select Roll Type -- / -- 判定種別を選択 --</option>
-                                <optgroup label="Combat Rolls / 戦闘判定">
-                                    <option value="Attack">Attack Roll / 攻撃判定</option>
-                                    <option value="Defense">Defense Roll / 防御判定</option>
-                                    <option value="Spell">Spell Roll / 呪文判定</option>
+                                <option value="">-- Select Roll Type --</option>
+                                <optgroup label="Combat Rolls">
+                                    <option value="Attack">Attack Roll</option>
+                                    <option value="Defense">Defense Roll</option>
+                                    <option value="Spell">Spell Roll</option>
                                 </optgroup>
-                                <optgroup label="Skill Rolls / スキル判定">
+                                <optgroup label="Skill Rolls">
                                     </optgroup>
                             </select>
-                            <button id="roll-dice-btn-sheet" class="w-full bg-purple-600 text-white p-3 rounded-lg font-semibold hover:bg-purple-700 transition duration-150 shadow-md hover:shadow-lg transform active:scale-95">
-                                Roll Dice! / ダイスを振る！
+                            <button id="roll-dice-btn-sheet" class="w-full bg-[#A0522D] text-white p-3 rounded-lg font-semibold hover:bg-[#8B4513] transition duration-150 shadow-md hover:shadow-lg transform active:scale-95">
+                                Roll Dice!
                             </button>
-                            <div id="roll-result-area-sheet" class="mt-3 text-center p-3 bg-purple-50 rounded-md border border-purple-200 min-h-[40px] flex flex-col justify-center">
-                                <p class="text-sm text-gray-600">Result will appear here. / 結果がここに表示されます。</p>
+                            <div id="roll-result-area-sheet" class="mt-3 text-center p-3 bg-[#FFFFF0] rounded-md border border-[#A0522D] min-h-[40px] flex flex-col justify-center">
+                                <p class="text-sm text-[#795548]">Result will appear here.</p>
                             </div>
                         </div>
 
-                        <div class="border-t pt-4">
-                            <h3 class="font-semibold text-gray-700 mb-2">Currency / 所持金 (Currency)</h3>
+                        <div class="border-t pt-4 border-[#D2B48C]">
+                            <h3 class="font-semibold text-[#654321] mb-2">Currency</h3>
                             <div id="currency-list" class="space-y-3">
                                 </div>
                         </div>
@@ -237,30 +249,30 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     
-                    <section id="equipped-items" class="card bg-gray-50">
-                        <h2 class="header-title text-red-700">
+                    <section id="equipped-items" class="card bg-[#FAF0E6]">
+                        <h2 class="header-title text-[#A0522D]">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14v6m-3-3h6m-9-10l-3-3v14a1 1 0 001 1h12a1 1 0 001-1v-14l-3 3M7 7h10"></path></svg>
-                            Equipped Items & Mods (4 Slots) / 装備品と補正 (4 Slots)
+                            Equipped Items & Mods (4 Slots)
                         </h2>
                         <div id="equipment-slots" class="space-y-4">
                             </div>
                     </section>
 
-                    <section id="inventory-management" class="card bg-emerald-50">
-                        <h2 class="header-title text-emerald-700">
+                    <section id="inventory-management" class="card bg-[#FFF8DC]">
+                        <h2 class="header-title text-[#006400]">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                            Carried Items / 所持品 (Carried Items)
+                            Carried Items
                         </h2>
 
-                        <div class="mb-4 p-3 bg-emerald-100 rounded-lg shadow-inner">
+                        <div class="mb-4 p-3 bg-[#D2B48C]/50 rounded-lg shadow-inner">
                             <div class="space-y-2">
-                                <input type="text" id="item-name" placeholder="Item Name (e.g., Potion) / アイテム名 (例: ポーション)" class="input-field p-2">
+                                <input type="text" id="item-name" placeholder="Item Name (e.g., Potion)" class="input-field p-2">
                                 <div class="flex space-x-2">
-                                    <input type="number" id="item-quantity" placeholder="Quantity / 数量" value="1" min="1" class="input-field p-2 w-1/3">
-                                    <input type="text" id="item-description" placeholder="Description (Optional) / 説明 (任意)" class="input-field p-2 w-2/3">
+                                    <input type="number" id="item-quantity" placeholder="Quantity" value="1" min="1" class="input-field p-2 w-1/3">
+                                    <input type="text" id="item-description" placeholder="Description (Optional)" class="input-field p-2 w-2/3">
                                 </div>
-                                <button id="add-item-btn" class="w-full bg-emerald-600 text-white p-2 rounded-lg font-semibold hover:bg-emerald-700 transition duration-150 shadow-md hover:shadow-lg">
-                                    Add to Inventory / 所持品に追加
+                                <button id="add-item-btn" class="w-full bg-[#006400] text-white p-2 rounded-lg font-semibold hover:bg-[#008000] transition duration-150 shadow-md hover:shadow-lg">
+                                    Add to Inventory
                                 </button>
                             </div>
                         </div>
@@ -270,23 +282,11 @@
                     </section>
                 </div>
 
-                <section id="character-background" class="card bg-indigo-50/50">
-                    <h2 class="header-title text-indigo-700">
+                <section id="character-background" class="card bg-[#FAF0E6]">
+                    <h2 class="header-title text-[#795548]">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        Background, Wishes & Info Output / 背景・願いと情報出力
+                        Background, Wishes & Info Output
                     </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <button class="copy-btn w-full" data-copy-target="full-sheet"># Copy Full Character Sheet / キャラクターシート全体をコピー</button>
-                        <button class="copy-btn w-full" data-copy-target="mods-and-gear"># Copy Modifiers & Special Effects / 補正値と特殊効果をコピー</button>
-                        <button class="copy-btn w-full" data-copy-target="inventory-and-money"># Copy Currency & Inventory List / 所持金と所持品一覧をコピー</button>
-                    </div>
-
-                    <h3 class="font-semibold text-gray-700 mb-2 mt-4">PC Wishes (Personal Quest - Up to 3) / PCの願い (Personal Quest - 3つまで)</h3>
-                    <div id="wishes-list" class="space-y-2 mb-4">
-                        <input type="text" data-wish-index="0" placeholder="PC Wish ① / PCの願い ①" class="input-field">
-                        <input type="text" data-wish-index="1" placeholder="PC Wish ② / PCの願い ②" class="input-field">
-                        <input type="text" data-wish-index="2" placeholder="PC Wish ③ / PCの願い ③" class="input-field">
-                    </div>
-
-                    <h3 class="font-semibold text-gray-700 mb-2 mt-4 border-t pt-4">Character Background & Traits
+               
