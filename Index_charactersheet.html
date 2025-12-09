@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOTC 5.1 Character Journal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --color-leather-dark: #5D4037;
+            --color-leather-light: #8D6E63;
+            --color-paper: #FAF0E6;
+            --color-ink-dark: #3E2723;
+            --color-action-green: #2E7D32;
+            --color-sienna: #A0522D;
+        }
+
+        body {
+            background-color: var(--color-leather-dark);
+            background-image: radial-gradient(var(--color-leather-light) 15%, transparent 16%), radial-gradient(var(--color-leather-light) 15%, transparent 16%);
+            background-size: 20px 20px;
+            font-family: 'Merriweather', serif;
+            color: #333;
+        }
+
+        h1, h2, h3, .handwriting {
+            font-family: 'Kalam', cursive;
+        }
+
+        .journal-page {
+            background-color: var(--color-paper);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            border-radius: 4px 12px 12px 4px;
+            position: relative;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+        .journal-page::before {
+            content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px;
+            border-right: 2px solid rgba(62, 39, 35, 0.1);
+        }
+
+        .paper-card {
+            background-color: #fffaf0;
+            border: 1px solid #d7ccc8;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .input-line {
+            background: transparent; border: none; border-bottom: 2px solid #bcaaa4;
+            color: var(--color-ink-dark); font-family: 'Kalam', cursive; font-size: 1.1rem;
+            padding: 2px 8px; width: 100%; transition: border-color 0.2s;
+        }
+        .input-line:focus { outline: none; border-bottom-color: var(--color-sienna); }
+        
+        .input-box {
+            background: rgba(255,255,255,0.5); border: 1px solid #bcaaa4; border-radius: 4px;
+            text-align: center; font-family: 'Merriweather', serif; font-size: 0.8rem;
+        }
+
+        .btn-action {
+            background-color: var(--color-action-green); color: white;
+            font-weight: 700; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background-color: #1b5e20; transform: translateY(-1px); }
+        .btn-action:active { transform: translateY(1px); box-shadow: none; }
+
+        .btn-sub {
+            background-color: var(--color-sienna); color: white; border-radius: 4px;
+            font-size: 0.75rem; padding: 2px 8px;
+        }
+        .btn-sub:hover { background-color: #8d4020; }
+
+        .mod-display {
+            font-family: 'Merriweather', serif; font-weight: 900; color: var(--color-ink-dark);
+        }
+        
+        .log-paper {
+            background-color: #fff;
+            background-image: linear-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 100% 1.5rem; line-height: 1.5rem;
+            font-family: 'Courier New', monospace; font-size: 0.8rem;
+        }
+
+        /* 装備入力用のグリッド */
+        .equip-stats {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-6 min-h-screen">
+
+    <div class="journal-page max-w-7xl mx-auto p-4 md:p-8 my-2">
+        
+        <header class="border-b-4 border-double border-stone-300 pb-2 mb-6 flex flex-wrap justify-between items-end gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl text-[#3E2723] mb-1">SOTC 5.1 Character Sheet</h1>
+                <p class="text-stone-500 italic text-xs">Based on Sword of the Crystalia Rulebook 5.1</p>
+            </div>
+            <div id="status-area" class="flex items-center bg-[#8D6E63] text-white px-3 py-1 rounded-full text-xs">
+                <span class="w-2 h-2 rounded-full bg-yellow-300 mr-2 animate-pulse" id="status-indicator"></span>
+                <span id="status-text">Ready</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <div class="lg:col-span-4 space-y-5">
+                <section class="paper-card relative">
+                    <div class="absolute -top-2 -left-2 bg-stone-700 text-white text-[10px] px-2 py-0.5 rounded">Basic Info</div>
+                    <div class="space-y-3 mt-2">
+                        <div>
+                            <label class="text-[10px] text-stone-500 uppercase font-bold">Name</label>
+                            <input type="text" id="char-name" class="input-line text-lg font-bold" placeholder="Character Name">
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-1/2">
+                                <label class="text-[10px] text-stone-500 uppercase font-bold">Class</label>
+                                <select id="char-class" class="input-line cursor-pointer bg-transparent text-sm">
+                                    <option value="">-- Class --</option>
+                                    <option value="戦士">戦士 (Warrior)</option>
+                                    <option value="斥候">斥候 (Scout)</option>
+                                    <option value="魔術">魔術 (Mage)</option>
+                                    <option value="治癒">治癒 (Healer)</option>
+                                </select>
+                            </div>
+                            <div class="w-1/2">
+                                <label class="text-[10px] text-stone-500 uppercase font-bold">Race</label>
+                                <input type="text" id="char-race" class="input-line text-sm" placeholder="Race (e.g. Dragonute)">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="paper-card">
+                    <h2 class="text-lg text-[#5D4037] mb-2 border-b border-stone-300">Vitals</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-2 bg-red-50 rounded border border-red-100">
+                            <span class="text-red-800 font-bold text-xs block">HP (Life)</span>
+                            <div class="flex justify-center items-baseline gap-1">
+                                <input type="number" id="char-current-hp" class="w-10 text-xl font-bold text-red-900 bg-transparent text-center border-b border-red-300" value="0">
+                                <span class="text-stone-400">/</span>
+                                <span id="disp-max-hp" class="text-lg text-red-700 handwriting">0</span>
+                            </div>
+                            <button class="growth-btn mt-1 text-[10px] bg-white border border-red-200 text-red-700 px-2 rounded hover:bg-red-50" data-target="maxHp">Max+1</button>
+                        </div>
+                        <div class="text-center p-2 bg-blue-50 rounded border border-blue-100">
+                            <span class="text-blue-800 font-bold text-xs block">SP (Mind)</span>
+                            <div class="flex justify-center items-baseline gap-1">
+                                <input type="number" id="char-current-sp" class="w-10 text-xl font-bold text-blue-900 bg-transparent text-center border-b border-blue-300" value="0">
+                                <span class="text-stone-400">/</span>
+                                <span id="disp-max-sp" class="text-lg text-blue-700 handwriting">0</span>
+                            </div>
+                            <button class="growth-btn mt-1 text-[10px] bg-white border border-blue-200 text-blue-700 px-2 rounded hover:bg-blue-50" data-target="maxSp">Max+1</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="paper-card bg-stone-50">
+                    <h2 class="text-lg text-[#5D4037] mb-2 border-b border-stone-300 flex justify-between items-center">
+                        <span>Skills (Non-Combat)</span>
+                        <span class="text-[10px] bg-stone-200 px-1 rounded">2D6+Mod</span>
+                    </h2>
+                    
+                    <div id="skill-list-display" class="space-y-2 mb-3">
+                        </div>
+
+                    <div class="pt-2 border-t border-stone-200">
+                        <div class="flex gap-1 mb-1">
+                            <select id="growth-skill-select" class="input-line text-xs w-full">
+                                <option value="">Select Skill to Grow...</option>
+                                <option value="隠密">隠密 (Sneak)</option>
+                                <option value="交渉">交渉 (Negotiation)</option>
+                                <option value="目星">目星 (Notice)</option>
+                                <option value="知識">知識 (Knowledge)</option>
+                            </select>
+                            <button id="add-growth-btn" class="btn-sub whitespace-nowrap">Grow +1</button>
+                        </div>
+                        <div id="growth-history" class="text-[9px] text-stone-500 italic h-8 overflow-y-auto leading-tight"></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-5 space-y-6">
+                
+                <section class="paper-card border-2 border-[#5D4037] relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-2 opacity-10 text-6xl">🎲</div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-xl font-bold text-[#2E7D32]">Check / Roll</h2>
+                        <div class="text-xs text-stone-500">Target Number (TN): 7+</div>
+                    </div>
+                    
+                    <div class="flex gap-2 mb-3">
+                        <select id="roll-type" class="input-line text-base font-bold text-[#1b5e20] w-2/3">
+                            <option value="">Select Action...</option>
+                            <optgroup label="Combat (戦闘)">
+                                <option value="Attack">Attack (攻撃判定)</option>
+                                <option value="Defense">Defense (防御判定)</option>
+                                <option value="Spell">Spell (呪文判定)</option>
+                            </optgroup>
+                            <optgroup label="Skills (非戦闘)">
+                                <option value="隠密">Sneak (隠密判定)</option>
+                                <option value="交渉">Negotiation (交渉判定)</option>
+                                <option value="目星">Notice (目星判定)</option>
+                                <option value="知識">Knowledge (知識判定)</option>
+                            </optgroup>
+                        </select>
+                        <button id="roll-btn" class="btn-action w-1/3 text-sm uppercase tracking-widest shadow-lg">ROLL 2D6</button>
+                    </div>
+
+                    <div id="roll-result-box" class="hidden bg-white p-3 text-center border border-stone-300 rounded shadow-inner animate-fade-in">
+                        <div class="flex justify-center items-baseline gap-2 font-serif text-[#3E2723]">
+                            <span id="roll-dice-val" class="text-xl">?</span>
+                            <span class="text-stone-400 text-xs">(Dice)</span>
+                            <span class="text-stone-400">+</span>
+                            <span id="roll-mod-val" class="text-xl">?</span>
+                            <span class="text-stone-400 text-xs">(Mod)</span>
+                            <span class="text-stone-400">=</span>
+                            <span id="roll-total-val" class="text-4xl font-black text-[#A0522D]">?</span>
+                        </div>
+                        <div id="roll-msg" class="text-xs font-bold handwriting text-red-600 h-4 mt-1"></div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="text-xs font-bold text-stone-500 uppercase mb-1">Total Stats (Modifiers)</h3>
+                    <div class="grid grid-cols-5 gap-2 text-center">
+                        <div class="bg-white p-1 rounded border border-stone-300">
+                            <div class="text-[9px] text-stone-500">Attack</div>
+                            <div id="mod-attack" class="mod-display text-base text-indigo-700">0</div>
+                        </div>
+                        <div class="bg-white p-1 rounded border border-stone-300">
+                            <div class="text-[9px] text-stone-500">Defense</div>
+                            <div id="mod-defense" class="mod-display text-base text-indigo-700">0</div>
+                        </div>
+                        <div class="bg-white p-1 rounded border border-stone-300">
+                            <div class="text-[9px] text-stone-500">Spell</div>
+                            <div id="mod-spell" class="mod-display text-base text-indigo-700">0</div>
+                        </div>
+                        <div class="bg-red-50 p-1 rounded border border-red-200">
+                            <div class="text-[9px] text-red-500">Dmg(W)</div>
+                            <div id="mod-dmg-w" class="mod-display text-base text-red-700">0</div>
+                        </div>
+                        <div class="bg-blue-50 p-1 rounded border border-blue-200">
+                            <div class="text-[9px] text-blue-500">Red(P)</div>
+                            <div id="mod-red-p" class="mod-display text-base text-blue-700">0</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="paper-card">
+                    <h2 class="text-lg text-[#5D4037] mb-3 border-b border-stone-300">Equipment & Effects</h2>
+                    <div id="equipment-container" class="space-y-4">
+                        </div>
+                </section>
+            </div>
+
+            <div class="lg:col-span-3 space-y-6">
+                <section class="paper-card bg-amber-50">
+                    <h2 class="text-sm font-bold text-amber-900 mb-2 uppercase">Purse</h2>
+                    <div class="flex gap-2">
+                        <div class="flex-1">
+                            <label class="text-[10px] text-amber-700 block">Gold (G)</label>
+                            <input type="number" id="money-gold" class="input-line text-right font-bold text-amber-900" value="0">
+                        </div>
+                        <div class="flex-1">
+                            <label class="text-[10px] text-slate-600 block">Silver (S)</label>
+                            <input type="number" id="money-silver" class="input-line text-right font-bold text-slate-700" value="10">
+                        </div>
+                    </div>
+                </section>
+
+                <section class="paper-card flex flex-col h-72">
+                    <h2 class="text-lg text-[#5D4037] mb-2">Backpack (Max 10)</h2>
+                    <div class="flex gap-1 mb-2">
+                        <input type="text" id="inv-name" placeholder="Item" class="input-line text-xs w-full">
+                        <input type="number" id="inv-qty" value="1" class="input-box w-10">
+                        <button id="inv-add-btn" class="btn-sub">Add</button>
+                    </div>
+                    <div id="inventory-list" class="flex-1 overflow-y-auto pr-1 space-y-1 text-sm"></div>
+                </section>
+
+                <section>
+                    <h3 class="text-xs font-bold text-stone-500 mb-1">Personal Quest / Notes</h3>
+                    <textarea id="char-memo" class="w-full h-32 bg-stone-100 border border-stone-300 rounded p-2 text-xs font-serif placeholder-stone-400" placeholder="PCの願い、経歴など..."></textarea>
+                </section>
+                
+                <section>
+                    <h3 class="text-xs font-bold text-stone-500 mb-1">Session Log</h3>
+                    <div class="log-paper h-32 overflow-y-auto rounded p-2 border border-stone-300" id="log-window">
+                        <div class="opacity-50 italic text-[10px]">-- Log Start --</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // Firebase Configuration
+        const firebaseConfig = (typeof __firebase_config !== 'undefined') ? JSON.parse(__firebase_config) : {
+            // apiKey: "YOUR_API_KEY_HERE", 
+        };
+
+        let db, charDocRef;
+        const CHAR_ID = "sotc_char_v5.1";
+
+        // ==========================================
+        // Rulebook 5.1 Data Definitions
+        // ==========================================
+        
+        // Non-Combat Skills (隠密, 交渉, 目星, 知識)
+        const SKILL_NAMES = ['隠密', '交渉', '目星', '知識'];
+
+        // Class Data (Base HP, SP, Combat Mods, Skill Mods)
+        const CLASS_DATA = {
+            '戦士': { 
+                maxHp: 10, maxSp: 1, 
+                combat: { Attack: 2, Defense: 1, Spell: 0 }, 
+                skills: { '隠密': 0, '交渉': 0, '目星': 0, '知識': 0 } 
+            },
+            '斥候': { 
+                maxHp: 10, maxSp: 1, 
+                combat: { Attack: 1, Defense: 0, Spell: 0 }, 
+                skills: { '隠密': 2, '交渉': 0, '目星': 2, '知識': 0 } 
+            },
+            '魔術': { 
+                maxHp: 8, maxSp: 3, 
+                combat: { Attack: 0, Defense: 0, Spell: 2 }, 
+                skills: { '隠密': 0, '交渉': 0, '目星': 1, '知識': 2 } 
+            },
+            '治癒': { 
+                maxHp: 8, maxSp: 3, 
+                combat: { Attack: 0, Defense: 0, Spell: 2 }, 
+                skills: { '隠密': 0, '交渉': 1, '目星': 0, '知識': 1 } 
+            },
+        };
+
+        // Equipment Slots
+        const EQUIPMENT_SLOTS = [
+            { id: 'mainWeapon', label: 'Main Weapon (主武器)' },
+            { id: 'armor', label: 'Armor (鎧)' },
+            { id: 'subWeapon', label: 'Auxiliary (補助手具)' },
+            { id: 'accessory', label: 'Accessory (装飾品)' }
+        ];
+
+        // Initial State
+        let charData = {
+            name: "", class: "", race: "",
+            hp: 0, sp: 0,
+            growths: { hp: 0, sp: 0, skills: {} },
+            equipment: {},
+            money: { gold: 0, silver: 10 },
+            inventory: [], memo: ""
+        };
+
+        const els = {
+            status: { indicator: document.getElementById('status-indicator'), text: document.getElementById('status-text') },
+            inputs: {
+                name: document.getElementById('char-name'),
+                class: document.getElementById('char-class'),
+                race: document.getElementById('char-race'),
+                hp: document.getElementById('char-current-hp'),
+                sp: document.getElementById('char-current-sp'),
+                gold: document.getElementById('money-gold'),
+                silver: document.getElementById('money-silver'),
+                memo: document.getElementById('char-memo')
+            },
+            display: {
+                maxHp: document.getElementById('disp-max-hp'),
+                maxSp: document.getElementById('disp-max-sp'),
+                skillList: document.getElementById('skill-list-display'),
+                mods: {
+                    atk: document.getElementById('mod-attack'),
+                    def: document.getElementById('mod-defense'),
+                    spl: document.getElementById('mod-spell'),
+                    dmgW: document.getElementById('mod-dmg-w'),
+                    redP: document.getElementById('mod-red-p'),
+                }
+            },
+            growth: {
+                select: document.getElementById('growth-skill-select'),
+                btn: document.getElementById('add-growth-btn'),
+                history: document.getElementById('growth-history')
+            },
+            roll: {
+                type: document.getElementById('roll-type'),
+                btn: document.getElementById('roll-btn'),
+                box: document.getElementById('roll-result-box'),
+                vals: { dice: document.getElementById('roll-dice-val'), mod: document.getElementById('roll-mod-val'), total: document.getElementById('roll-total-val') },
+                msg: document.getElementById('roll-msg')
+            },
+            inv: {
+                list: document.getElementById('inventory-list'),
+                name: document.getElementById('inv-name'),
+                qty: document.getElementById('inv-qty'),
+                addBtn: document.getElementById('inv-add-btn')
+            },
+            equipContainer: document.getElementById('equipment-container'),
+            log: document.getElementById('log-window')
+        };
+
+        // Initialization
+        async function init() {
+            try {
+                if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                    console.warn("Firebase config missing. Running in offline/demo mode.");
+                    setupUI();
+                    updateData(charData); // Render initial state
+                    return;
+                }
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                charDocRef = doc(db, "characters", CHAR_ID);
+                setupUI();
+                startDataListener();
+            } catch (e) {
+                console.error(e);
+                els.status.text.textContent = "Offline Mode";
+                setupUI();
+                render();
+            }
+        }
+
+        function addLog(msg) {
+            const div = document.createElement('div');
+            div.textContent = `> ${msg}`;
+            els.log.appendChild(div);
+            els.log.scrollTop = els.log.scrollHeight;
+        }
+
+        function setupUI() {
+            // Generate Equipment Fields
+            els.equipContainer.innerHTML = '';
+            EQUIPMENT_SLOTS.forEach(slot => {
+                const div = document.createElement('div');
+                div.className = "pb-3 border-b border-stone-200 last:border-0";
+                div.innerHTML = `
+                    <div class="mb-1">
+                        <label class="text-[9px] text-stone-500 uppercase font-bold">${slot.label}</label>
+                        <input type="text" class="input-line text-sm font-bold" placeholder="Item Name" data-slot="${slot.id}" data-field="name">
+                    </div>
+                    <div class="mb-1">
+                        <input type="text" class="input-line text-xs italic text-stone-600" placeholder="Special Effects / Notes (特効など)" data-slot="${slot.id}" data-field="effect">
+                    </div>
+                    <div class="equip-stats">
+                        <input type="number" class="input-box bg-white" placeholder="Atk" title="Attack Mod" data-slot="${slot.id}" data-field="atk">
+                        <input type="number" class="input-box bg-white" placeholder="Def" title="Defense Mod" data-slot="${slot.id}" data-field="def">
+                        <input type="number" class="input-box bg-white" placeholder="Spl" title="Spell Mod" data-slot="${slot.id}" data-field="spl">
+                        <input type="number" class="input-box bg-red-50" placeholder="WD" title="Weapon Dmg" data-slot="${slot.id}" data-field="dmgW">
+                        <input type="number" class="input-box bg-red-50" placeholder="MD" title="Magic Dmg" data-slot="${slot.id}" data-field="dmgM">
+                        <input type="number" class="input-box bg-blue-50" placeholder="Red" title="Damage Reduction" data-slot="${slot.id}" data-field="redP">
+                    </div>
+                `;
+                els.equipContainer.appendChild(div);
+            });
+
+            // Basic Inputs Listeners
+            ['name', 'class', 'race', 'memo'].forEach(id => {
+                els.inputs[id].addEventListener('change', (e) => updateData({ [id]: e.target.value }));
+            });
+            ['hp', 'sp'].forEach(id => {
+                els.inputs[id].addEventListener('change', (e) => updateData({ [id]: parseInt(e.target.value)||0 }));
+            });
+            ['gold', 'silver'].forEach(key => {
+                els.inputs[key].addEventListener('change', (e) => updateData({ money: { ...charData.money, [key]: parseInt(e.target.value)||0 } }));
+            });
+
+            // Equipment Listener
+            els.equipContainer.addEventListener('change', (e) => {
+                if (e.target.tagName === 'INPUT') {
+                    const slot = e.target.dataset.slot;
+                    const field = e.target.dataset.field;
+                    let val = e.target.value;
+                    if (['atk','def','spl','dmgW','dmgM','redP'].includes(field)) val = parseInt(val) || 0;
+                    
+                    const newEquip = { ...charData.equipment };
+                    if (!newEquip[slot]) newEquip[slot] = {};
+                    newEquip[slot][field] = val;
+                    updateData({ equipment: newEquip });
+                }
+            });
+
+            // Growth Buttons
+            els.growth.btn.addEventListener('click', () => {
+                const skill = els.growth.select.value;
+                if (!skill) return;
+                const newGrowths = { ...charData.growths };
+                if (!newGrowths.skills) newGrowths.skills = {};
+                newGrowths.skills[skill] = (newGrowths.skills[skill] || 0) + 1;
+                updateData({ growths: newGrowths });
+                addLog(`Growth: ${skill} +1`);
+            });
+            document.querySelectorAll('.growth-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const target = e.target.dataset.target;
+                    const newGrowths = { ...charData.growths };
+                    const key = target === 'maxHp' ? 'hp' : 'sp';
+                    newGrowths[key] = (newGrowths[key] || 0) + 1;
+                    updateData({ growths: newGrowths });
+                    addLog(`Growth: Max ${key.toUpperCase()} +1`);
+                });
+            });
+
+            // Inventory Add
+            els.inv.addBtn.addEventListener('click', () => {
+                const name = els.inv.name.value;
+                const qty = parseInt(els.inv.qty.value) || 1;
+                if (!name) return;
+                const newInv = [...charData.inventory, { id: Date.now(), name, qty }];
+                els.inv.name.value = '';
+                updateData({ inventory: newInv });
+            });
+
+            // Dice Roll
+            els.roll.btn.addEventListener('click', performRoll);
+        }
+
+        function startDataListener() {
+            onSnapshot(charDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    charData = { ...charData, ...docSnap.data() };
+                    render();
+                } else {
+                    updateData(charData);
+                }
+            });
+        }
+
+        async function updateData(partialData) {
+            charData = { ...charData, ...partialData };
+            render();
+            if(db) {
+                els.status.indicator.className = "w-2 h-2 rounded-full mr-2 bg-yellow-400 animate-pulse";
+                els.status.text.textContent = "Saving...";
+                await setDoc(charDocRef, charData, { merge: true });
+                els.status.indicator.className = "w-2 h-2 rounded-full mr-2 bg-green-500";
+                els.status.text.textContent = "Saved";
+            }
+        }
+
+        function render() {
+            // Populate Inputs
+            if (document.activeElement !== els.inputs.name) els.inputs.name.value = charData.name || "";
+            if (document.activeElement !== els.inputs.class) els.inputs.class.value = charData.class || "";
+            if (document.activeElement !== els.inputs.race) els.inputs.race.value = charData.race || "";
+            if (document.activeElement !== els.inputs.hp) els.inputs.hp.value = charData.hp;
+            if (document.activeElement !== els.inputs.sp) els.inputs.sp.value = charData.sp;
+            if (document.activeElement !== els.inputs.gold) els.inputs.gold.value = charData.money?.gold || 0;
+            if (document.activeElement !== els.inputs.silver) els.inputs.silver.value = charData.money?.silver || 0;
+            if (document.activeElement !== els.inputs.memo) els.inputs.memo.value = charData.memo || "";
+
+            // Populate Equipment
+            const equip = charData.equipment || {};
+            EQUIPMENT_SLOTS.forEach(slot => {
+                const data = equip[slot.id] || {};
+                const container = els.equipContainer.querySelector(`[data-slot="${slot.id}"][data-field="name"]`).parentElement.parentElement;
+                
+                // Name & Effect
+                const nameInput = container.querySelector(`[data-field="name"]`);
+                const effectInput = container.querySelector(`[data-field="effect"]`);
+                if(document.activeElement !== nameInput) nameInput.value = data.name || "";
+                if(document.activeElement !== effectInput) effectInput.value = data.effect || "";
+
+                // Stats
+                ['atk', 'def', 'spl', 'dmgW', 'dmgM', 'redP'].forEach(field => {
+                    const input = container.querySelector(`[data-field="${field}"]`);
+                    if (input && document.activeElement !== input) input.value = data[field] !== undefined ? data[field] : '';
+                });
+            });
+
+            // Calculate Base Stats (Class + Growth)
+            const cls = CLASS_DATA[charData.class] || { maxHp: 0, maxSp: 0, combat: {}, skills: {} };
+            const growth = charData.growths || { hp: 0, sp: 0, skills: {} };
+
+            els.display.maxHp.textContent = cls.maxHp + (growth.hp || 0);
+            els.display.maxSp.textContent = cls.maxSp + (growth.sp || 0);
+
+            // Calculate Totals (Base + Equip)
+            let mods = { atk: 0, def: 0, spl: 0, dmgW: 0, redP: 0 };
+            
+            // 1. Combat Mods
+            if(cls.combat) {
+                mods.atk += cls.combat.Attack || 0;
+                mods.def += cls.combat.Defense || 0;
+                mods.spl += cls.combat.Spell || 0;
+            }
+            // 2. Equipment Mods
+            Object.values(equip).forEach(e => {
+                mods.atk += (parseInt(e.atk) || 0);
+                mods.def += (parseInt(e.def) || 0);
+                mods.spl += (parseInt(e.spl) || 0);
+                mods.dmgW += (parseInt(e.dmgW) || 0);
+                // Magic DMG added to Weapon DMG for simplicity in display, or separate if needed
+                mods.redP += (parseInt(e.redP) || 0);
+            });
+
+            els.display.mods.atk.textContent = signed(mods.atk);
+            els.display.mods.def.textContent = signed(mods.def);
+            els.display.mods.spl.textContent = signed(mods.spl);
+            els.display.mods.dmgW.textContent = signed(mods.dmgW);
+            els.display.mods.redP.textContent = mods.redP; // Red is usually negative or absolute
+
+            // Render Skill List (Non-Combat)
+            els.display.skillList.innerHTML = '';
+            SKILL_NAMES.forEach(skill => {
+                const base = cls.skills?.[skill] || 0;
+                const grow = growth.skills?.[skill] || 0;
+                const total = base + grow;
+                
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center border-b border-stone-200 pb-1";
+                div.innerHTML = `
+                    <span class="text-sm text-stone-700 font-bold">${skill}</span>
+                    <div class="flex items-center gap-1">
+                        <span class="text-[10px] text-stone-400">(Base:${base} + Grow:${grow})</span>
+                        <span class="font-bold text-[#2E7D32] text-lg w-8 text-right">${total >= 0 ? '+'+total : total}</span>
+                    </div>
+                `;
+                els.display.skillList.appendChild(div);
+            });
+
+            // Growth History
+            const history = [];
+            if (growth.hp) history.push(`HP+${growth.hp}`);
+            if (growth.sp) history.push(`SP+${growth.sp}`);
+            if (growth.skills) for (const [s, v] of Object.entries(growth.skills)) history.push(`${s}+${v}`);
+            els.growth.history.textContent = history.length ? history.join(', ') : "No growth records.";
+
+            // Inventory
+            els.inv.list.innerHTML = '';
+            (charData.inventory || []).forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = "flex justify-between items-center bg-white p-1 rounded border border-stone-200";
+                div.innerHTML = `
+                    <div class="flex gap-2 text-xs">
+                        <span class="font-bold text-stone-500">x${item.qty}</span>
+                        <span>${item.name}</span>
+                    </div>
+                    <button class="text-red-400 font-bold px-2 hover:bg-red-50 rounded">×</button>
+                `;
+                div.querySelector('button').addEventListener('click', () => {
+                    const newInv = [...charData.inventory];
+                    newInv.splice(index, 1);
+                    updateData({ inventory: newInv });
+                });
+                els.inv.list.appendChild(div);
+            });
+        }
+
+        function performRoll() {
+            const type = els.roll.type.value;
+            if (!type) return;
+
+            let mod = 0;
+            const cls = CLASS_DATA[charData.class] || { combat: {}, skills: {} };
+            const growth = charData.growths || { skills: {} };
+            const equip = charData.equipment || {};
+
+            // Calculate Modifier based on Type
+            if (['Attack', 'Defense', 'Spell'].includes(type)) {
+                // Combat Check
+                mod += (cls.combat[type] || 0);
+                Object.values(equip).forEach(e => {
+                    if (type === 'Attack') mod += (parseInt(e.atk) || 0);
+                    if (type === 'Defense') mod += (parseInt(e.def) || 0);
+                    if (type === 'Spell') mod += (parseInt(e.spl) || 0);
+                });
+            } else {
+                // Skill Check (隠密, 交渉, etc)
+                mod += (cls.skills[type] || 0) + (growth.skills?.[type] || 0);
+                // Note: Equipment modifiers for Skills are rare in basic rules but can be added if needed
+            }
+
+            // Dice Logic
+            const d1 = Math.floor(Math.random() * 6) + 1;
+            const d2 = Math.floor(Math.random() * 6) + 1;
+            const diceTotal = d1 + d2;
+            const total = diceTotal + mod;
+
+            els.roll.box.classList.remove('hidden');
+            els.roll.vals.dice.textContent = diceTotal;
+            els.roll.vals.mod.textContent = mod;
+            els.roll.vals.total.textContent = total;
+
+            let msg = "";
+            if (diceTotal === 12) msg = "✨ CRITICAL!";
+            else if (diceTotal === 2) msg = "💀 FUMBLE...";
+            else if (total >= 7) msg = "Success (Standard)"; // Standard TN is 7
+            else msg = "Failure...";
+
+            els.roll.msg.textContent = msg;
+            addLog(`Roll [${type}]: 2D6(${diceTotal}) + ${mod} = ${total} >> ${msg}`);
+        }
+
+        function signed(n) { return n >= 0 ? `+${n}` : n; }
+        
+        // Start App
+        init();
+    </script>
+</body>
+</html>
+
