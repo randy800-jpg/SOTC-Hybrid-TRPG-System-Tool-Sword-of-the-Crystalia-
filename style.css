@@ -1,0 +1,110 @@
+/* style.css - Journal Theme V7 */
+:root {
+    --color-leather-dark: #5D4037;
+    --color-leather-light: #8D6E63;
+    --color-paper: #FAF0E6;
+    --color-ink-dark: #3E2723;
+    --color-action-green: #2E7D32;
+    --color-sienna: #A0522D;
+}
+
+body {
+    background-color: var(--color-leather-dark);
+    background-image: radial-gradient(var(--color-leather-light) 15%, transparent 16%), radial-gradient(var(--color-leather-light) 15%, transparent 16%);
+    background-size: 20px 20px;
+    font-family: 'Merriweather', serif;
+    color: #333;
+}
+
+.handwriting { font-family: 'Kalam', cursive; }
+
+.journal-page {
+    background-color: var(--color-paper);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    border-radius: 4px 12px 12px 4px;
+    position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+}
+.journal-page::before {
+    content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px;
+    border-right: 2px solid rgba(62, 39, 35, 0.1);
+}
+
+.paper-card {
+    background-color: #fffaf0; border: 1px solid #d7ccc8; border-radius: 8px; padding: 1rem; box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+}
+
+.section-title {
+    font-family: 'Kalam', cursive;
+    color: var(--color-ink-dark);
+    font-size: 1.1rem;
+    border-bottom: 1px solid #d7ccc8;
+    margin-bottom: 0.5rem;
+}
+
+.label-mini {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    color: #8d6e63;
+    font-weight: bold;
+    display: block;
+}
+
+.input-line {
+    background: transparent; border: none; border-bottom: 2px solid #bcaaa4;
+    color: var(--color-ink-dark); font-family: 'Merriweather', serif;
+    padding: 2px 4px; width: 100%; transition: border-color 0.2s;
+}
+.input-line:focus { outline: none; border-bottom-color: var(--color-sienna); }
+
+.input-box {
+    background: rgba(255,255,255,0.7); border: 1px solid #bcaaa4; border-radius: 4px;
+    text-align: center; font-size: 0.75rem; padding: 2px;
+}
+
+.btn-action {
+    background-color: var(--color-action-green); color: white; font-weight: 700;
+    border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); transition: all 0.2s;
+}
+.btn-action:hover { background-color: #1b5e20; transform: translateY(-1px); }
+.btn-action:active { transform: translateY(1px); box-shadow: none; }
+
+.btn-sub {
+    background-color: var(--color-sienna); color: white; border-radius: 4px;
+    font-size: 0.75rem; padding: 2px 8px; transition: background 0.2s;
+}
+.btn-sub:hover { background-color: #8d4020; }
+
+.growth-btn {
+    font-size: 0.65rem; border: 1px solid currentColor; border-radius: 4px; padding: 0 4px;
+    background: rgba(255,255,255,0.5); cursor: pointer;
+}
+.growth-btn:hover { background: rgba(255,255,255,1); }
+
+/* Status Mods Grid */
+.mod-cell {
+    background: rgba(255,255,255,0.6); border: 1px solid #d7ccc8; border-radius: 4px;
+    padding: 2px; text-align: center;
+}
+.mod-cell .label { font-size: 0.6rem; color: #5d4037; font-weight: bold; }
+.mod-cell .val { font-size: 1.1rem; font-weight: 900; font-family: 'Merriweather', serif; line-height: 1.2; }
+.mod-cell .sub { font-size: 0.5rem; color: #795548; white-space: nowrap; }
+.mod-cell .icon { font-size: 0.8rem; }
+
+/* Status Effect Tags */
+.status-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+.status-tag.short { background-color: #FF9800; } /* Orange */
+.status-tag.long { background-color: #7E57C2; } /* Purple */
+.status-tag.perm { background-color: #5D4037; } /* Brown */
+.status-tag .remove { cursor: pointer; font-size: 0.9rem; opacity: 0.8; }
+.status-tag .remove:hover { opacity: 1; }
+
+.log-paper {
+    background-color: #fff; background-image: linear-gradient(#f5f5f5 1px, transparent 1px);
+    background-size: 100% 1.4rem; line-height: 1.4rem;
+    font-family: 'Courier New', monospace; font-size: 0.75rem; color: #444;
+}
