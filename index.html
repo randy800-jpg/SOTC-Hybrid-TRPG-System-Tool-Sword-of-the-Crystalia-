@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOTC Character Journal V7.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Merriweather:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-2 md:p-6 min-h-screen">
+    <div class="journal-page max-w-5xl mx-auto p-4 md:p-8 my-2">
+        <header class="border-b-4 border-double border-[#8D6E63] pb-2 mb-4 flex flex-wrap justify-between items-end gap-2">
+            <div>
+                <h1 class="text-3xl md:text-4xl text-[#3E2723] mb-1 handwriting">Adventure Journal</h1>
+                <p class="text-[#5D4037] italic text-xs">SOTC System V7.1</p>
+            </div>
+            <div class="flex gap-2 items-center">
+                 <select id="char-load-select" class="input-line text-xs w-32">
+                    <option value="">Load Character...</option>
+                </select>
+                <button id="btn-save" class="btn-sub">Save</button>
+                <div id="app-status-area" class="flex items-center bg-[#8D6E63] text-white px-3 py-1 rounded-full text-xs">
+                    <span class="w-2 h-2 rounded-full bg-yellow-300 mr-2 animate-pulse" id="status-indicator"></span>
+                    <span id="status-text">Init...</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="paper-card mb-4">
+            <h2 class="section-title">Identity</h2>
+            <div class="flex flex-wrap gap-4 items-end">
+                <div class="flex-1 min-w-[150px]">
+                    <label class="label-mini">Name</label>
+                    <input type="text" id="char-name" class="input-line text-xl font-bold handwriting" placeholder="Name">
+                </div>
+                <div class="w-24">
+                    <label class="label-mini">Age</label>
+                    <input type="text" id="char-age" class="input-line text-center" placeholder="Age">
+                </div>
+                <div class="w-32">
+                    <label class="label-mini">Race</label>
+                    <input type="text" id="char-race" class="input-line text-center" placeholder="Race">
+                </div>
+                <div class="w-32">
+                    <label class="label-mini">Class</label>
+                    <select id="char-class" class="input-line cursor-pointer bg-transparent text-sm font-bold">
+                        <option value="">- Class -</option>
+                        <option value="WAR">Warrior (WAR)</option>
+                        <option value="SCT">Scout (SCT)</option>
+                        <option value="MAG">Mage (MAG)</option>
+                        <option value="HLR">Healer (HLR)</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section class="paper-card mb-4 bg-[#FFF8E1]">
+            <h2 class="section-title">Conditions</h2>
+            <div class="flex gap-2 mb-2 items-center">
+                <select id="condition-select" class="input-line text-xs w-48">
+                    <option value="">Add Condition...</option>
+                    <optgroup label="Short (Recoverable)">
+                        <option value="Poison">Poison</option>
+                        <option value="Bleed">Bleed</option>
+                        <option value="Exhaust">Exhaust</option>
+                        <option value="Stone1">Stone (1)</option>
+                        <option value="Fainted">Fainted (Kizetsu)</option>
+                    </optgroup>
+                    <optgroup label="Long (Heavy)">
+                        <option value="ExPoison">EX Poison</option>
+                        <option value="Disease">Disease</option>
+                        <option value="Stone2">Stone (2)</option>
+                        <option value="Stone3">Stone (3)</option>
+                        <option value="Critical">Critical (Jutai)</option>
+                    </optgroup>
+                    <optgroup label="Permanent">
+                        <option value="Stone4">Stone (4)</option>
+                        <option value="Curse">Curse</option>
+                    </optgroup>
+                </select>
+                <button id="btn-add-condition" class="btn-sub px-3">+</button>
+            </div>
+            <div id="condition-container" class="flex flex-wrap gap-2 min-h-[30px] p-2 border border-dashed border-[#d7ccc8] rounded">
+                </div>
+        </section>
+
+        <section class="paper-card mb-4">
+            <h2 class="section-title">Equipment</h2>
+            <div id="equipment-container" class="space-y-3 mb-3">
+                </div>
+            <div class="mt-4 pt-3 border-t border-[#d7ccc8]">
+                <h3 class="text-xs font-bold text-[#5D4037] mb-2">Tools & Misc Mods (Basket)</h3>
+                <div class="flex gap-2 mb-2">
+                    <input type="text" id="tool-desc" class="input-line text-xs w-full" placeholder="Tools Description / Special Effects">
+                </div>
+                <div class="flex gap-2 items-center bg-[#ECEFF1] p-2 rounded">
+                    <span class="text-[10px] font-bold text-gray-500">Misc Mods:</span>
+                    <div class="flex items-center gap-1"><span class="icon">👤</span><input type="number" id="misc-stel" class="input-box w-10" placeholder="0"></div>
+                    <div class="flex items-center gap-1"><span class="icon">💬</span><input type="number" id="misc-nego" class="input-box w-10" placeholder="0"></div>
+                    <div class="flex items-center gap-1"><span class="icon">👁️</span><input type="number" id="misc-pers" class="input-box w-10" placeholder="0"></div>
+                    <div class="flex items-center gap-1"><span class="icon">📖</span><input type="number" id="misc-know" class="input-box w-10" placeholder="0"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="paper-card mb-4 border-2 border-[#5D4037]">
+            <h2 class="section-title text-[#2E7D32]">Status & Modifiers</h2>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="stat-box bg-red-50 border-red-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-red-800 font-bold text-xs">HP</span>
+                        <button class="growth-btn text-red-700" data-target="maxHp">Max+1</button>
+                    </div>
+                    <div class="flex justify-center items-baseline gap-1">
+                        <input type="number" id="char-current-hp" class="w-12 text-2xl font-bold text-red-900 bg-transparent text-center border-b border-red-300" placeholder="0">
+                        <span class="text-gray-400">/</span>
+                        <span id="disp-max-hp" class="text-lg text-red-700 handwriting">0</span>
+                    </div>
+                </div>
+                <div class="stat-box bg-blue-50 border-blue-200">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-blue-800 font-bold text-xs">SP</span>
+                        <button class="growth-btn text-blue-700" data-target="maxSp">Max+1</button>
+                    </div>
+                    <div class="flex justify-center items-baseline gap-1">
+                        <input type="number" id="char-current-sp" class="w-12 text-2xl font-bold text-blue-900 bg-transparent text-center border-b border-blue-300" placeholder="0">
+                        <span class="text-gray-400">/</span>
+                        <span id="disp-max-sp" class="text-lg text-blue-700 handwriting">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <h3 class="label-mini mb-1">Combat Stats</h3>
+                <div class="grid grid-cols-4 gap-1 mb-1">
+                    <div class="mod-cell"><div class="label">Atk</div><div id="val-atkMod" class="val">0</div><div id="sub-atkMod" class="sub"></div></div>
+                    <div class="mod-cell"><div class="label">Def</div><div id="val-defMod" class="val">0</div><div id="sub-defMod" class="sub"></div></div>
+                    <div class="mod-cell"><div class="label">Spl</div><div id="val-spellMod" class="val">0</div><div id="sub-spellMod" class="sub"></div></div>
+                    <div class="mod-cell"><div class="label">Aid</div><div id="val-aidMod" class="val">0</div><div id="sub-aidMod" class="sub"></div></div>
+                </div>
+                <div class="grid grid-cols-4 gap-1">
+                    <div class="mod-cell bg-red-50"><div class="label">W.Dmg</div><div id="val-weaponDmgMod" class="val text-red-800">0</div><div id="sub-weaponDmgMod" class="sub"></div></div>
+                    <div class="mod-cell bg-red-50"><div class="label">M.Dmg</div><div id="val-magicDmgMod" class="val text-red-800">0</div><div id="sub-magicDmgMod" class="sub"></div></div>
+                    <div class="mod-cell bg-blue-50"><div class="label">P.Red</div><div id="val-physicDmgRed" class="val text-blue-800">0</div><div id="sub-physicDmgRed" class="sub"></div></div>
+                    <div class="mod-cell bg-blue-50"><div class="label">M.Red</div><div id="val-magicDmgRed" class="val text-blue-800">0</div><div id="sub-magicDmgRed" class="sub"></div></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex justify-between items-end mb-1">
+                    <h3 class="label-mini">Skill Stats</h3>
+                    <div class="text-[9px] text-gray-500 italic">Growth History: <span id="growth-history">0</span></div>
+                </div>
+                <div class="grid grid-cols-4 gap-1 mb-2">
+                    <div class="mod-cell">
+                        <div class="label"><span class="icon">👤</span> Stl</div>
+                        <div id="val-stelMod" class="val text-green-800">0</div>
+                        <div id="sub-stelMod" class="sub"></div>
+                    </div>
+                    <div class="mod-cell">
+                        <div class="label"><span class="icon">💬</span> Neg</div>
+                        <div id="val-negoMod" class="val text-green-800">0</div>
+                        <div id="sub-negoMod" class="sub"></div>
+                    </div>
+                    <div class="mod-cell">
+                        <div class="label"><span class="icon">👁️</span> Obs</div>
+                        <div id="val-persMod" class="val text-green-800">0</div>
+                        <div id="sub-persMod" class="sub"></div>
+                    </div>
+                    <div class="mod-cell">
+                        <div class="label"><span class="icon">📖</span> Knw</div>
+                        <div id="val-knowMod" class="val text-green-800">0</div>
+                        <div id="sub-knowMod" class="sub"></div>
+                    </div>
+                </div>
+                <div class="flex gap-1 justify-end">
+                    <select id="growth-select" class="input-line text-xs w-24">
+                        <option value="">Grow...</option>
+                        <option value="stelMod">Stl (👤)</option>
+                        <option value="negoMod">Neg (💬)</option>
+                        <option value="persMod">Obs (👁️)</option>
+                        <option value="knowMod">Knw (📖)</option>
+                    </select>
+                    <button id="btn-growth" class="btn-sub">+1</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="paper-card mb-4 bg-amber-50">
+            <h2 class="section-title text-amber-900">Purse</h2>
+            <div class="flex gap-4">
+                <div class="flex-1 flex items-center gap-2">
+                    <span class="text-xs font-bold text-amber-700">Gold</span>
+                    <input type="number" id="money-gold" class="input-line text-right font-bold text-amber-900 w-full" value="0">
+                </div>
+                <div class="flex-1 flex items-center gap-2">
+                    <span class="text-xs font-bold text-gray-600">Silver</span>
+                    <input type="number" id="money-silver" class="input-line text-right font-bold text-gray-700 w-full" value="10">
+                </div>
+            </div>
+        </section>
+
+        <section class="paper-card mb-4">
+            <h2 class="section-title">Backpack (Max 10)</h2>
+            <div class="flex gap-1 mb-2">
+                <input type="text" id="inv-name" placeholder="Item Name & Desc" class="input-line text-xs w-full">
+                <button id="btn-inv-add" class="btn-sub w-16">Add</button>
+            </div>
+            <div id="inventory-list" class="space-y-1">
+                </div>
+        </section>
+
+        <section class="paper-card mb-4 border-2 border-[#5D4037]">
+            <h2 class="section-title text-[#2E7D32]">Dice Roll (2D6)</h2>
+            <div class="flex gap-2 mb-2">
+                <select id="roll-type" class="input-line font-bold text-[#1b5e20] w-full">
+                    <option value="">Select Check...</option>
+                    <optgroup label="Combat">
+                        <option value="atkMod">Attack Check</option>
+                        <option value="defMod">Defense Check</option>
+                        <option value="spellMod">Spell Check</option>
+                        <option value="aidMod">Aid Check</option>
+                    </optgroup>
+                    <optgroup label="Skill">
+                        <option value="stelMod">Sneak Check (Stl)</option>
+                        <option value="negoMod">Nego Check (Neg)</option>
+                        <option value="persMod">Observe Check (Obs)</option>
+                        <option value="knowMod">Knowledge Check (Knw)</option>
+                    </optgroup>
+                </select>
+                <button id="btn-roll" class="btn-action w-24">ROLL</button>
+            </div>
+            <div id="roll-result-area" class="bg-white p-2 rounded border border-gray-300 text-center mb-2 min-h-[50px] flex items-center justify-center">
+                <span class="text-gray-400 text-xs">Result will appear here...</span>
+            </div>
+            <div id="roll-history" class="text-[10px] text-gray-500 h-16 overflow-y-auto border-t border-gray-200 pt-1">
+                </div>
+        </section>
+
+        <section class="paper-card mb-4">
+            <h2 class="section-title">Wishes (Personal Quest)</h2>
+            <div class="space-y-2">
+                <input type="text" id="wish-1" class="input-line text-xs" placeholder="Wish 1">
+                <input type="text" id="wish-2" class="input-line text-xs" placeholder="Wish 2">
+                <input type="text" id="wish-3" class="input-line text-xs" placeholder="Wish 3">
+            </div>
+        </section>
+
+        <section class="paper-card mb-4">
+            <h2 class="section-title">Background & Notes</h2>
+            <textarea id="char-bg" class="w-full h-24 bg-transparent border-b border-[#d7ccc8] text-xs resize-none focus:outline-none" placeholder="History, Personality, etc..."></textarea>
+        </section>
+
+        <section class="paper-card mb-4">
+            <h2 class="section-title">Session Log</h2>
+            <div id="log-window" class="log-paper h-32 overflow-y-auto rounded p-2 border border-[#d7ccc8]">
+                <div class="opacity-50 italic text-[10px]">-- Session Start --</div>
+            </div>
+        </section>
+
+        <footer class="mt-8 mb-12 flex flex-wrap gap-2 justify-center">
+            <button class="btn-sub py-2 px-4" onclick="exportMd('A')">Copy Full Sheet (A)</button>
+            <button class="btn-sub py-2 px-4" onclick="exportMd('B')">Copy Stats (B)</button>
+            <button class="btn-sub py-2 px-4" onclick="exportMd('C')">Copy Inventory (C)</button>
+            <button class="btn-sub py-2 px-4" onclick="exportMd('D')">Copy Narrative (D)</button>
+        </footer>
+
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
